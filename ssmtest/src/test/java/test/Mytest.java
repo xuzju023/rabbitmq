@@ -23,7 +23,7 @@ public class Mytest {
 	@Autowired
 	private FwAlertingFormInstServiceImpl service;
 	@Autowired
-	private FwAlertingFormInstMapper mapper;
+	private FwAlertingFormInstMapper mapper; 
 
 	@Test
 	public void test1() throws Exception {
