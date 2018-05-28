@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xzj.mapper.FwAlertingFormInstMapper">
+	<resultMap id="BaseResultMap"
+		type="com.xzj.domain.FwAlertingFormInst">
+		<id column="ID" jdbcType="BIGINT" property="id" />
+
+		<result column="RULENAME" jdbcType="VARCHAR"
+			property="ruleName" />
+
+		<result column="FORM_INST_ID" jdbcType="BIGINT"
+			property="formInstID" />
+
+		<result column="ALERTING_ID" jdbcType="BIGINT"
+			property="alertingID" />
+
+		<result column="SUCCESS" jdbcType="VARCHAR" property="success" />
+
+		<result column="CREATED_BY" property="createdBy"
+			jdbcType="BIGINT" />
+
+		<result column="CREATION_DATE" property="creationDate"
+			jdbcType="DATE" />
+
+		<result column="UPDATED_BY" property="updatedBy"
+			jdbcType="BIGINT" />
+
+		<result column="UPDATION_DATE" property="updationDate"
+			jdbcType="DATE" />
+
+		<result column="ENABLED_FLAG" property="enabledFlag"
+			jdbcType="CHAR" />
+
+		<result column="ALERTING_NAME" property="alertingName"
+			jdbcType="VARCHAR" />
+
+		<result column="FORM_NAME" property="formName"
+			jdbcType="VARCHAR" />
+
+		<result column="APPLICANT_NAME" property="applicantName"
+			jdbcType="VARCHAR" />
+
+		<result column="RULEDESCRIBE" property="ruleDescribe"
+			jdbcType="VARCHAR" />
+
+		<result column="KEYVALUE" property="keyValue"
+			jdbcType="VARCHAR" />
+
+		<result column="DEPARTMENT_NAME" property="deptName"
+			jdbcType="VARCHAR" />
+
+	</resultMap>
+
+	<sql id="findCondition">
+		<where>
+			<if test="afi.alertingName!=null and afi.alertingName!=''">
+				AND (
+				A.ALERTING_NAME LIKE CONCAT('%',
+				#{afi.alertingName},
+				'%')
+				)
+			</if>
+			<if test="afi.success!=null and afi.success!=''">
+				AND (
+				AFI.SUCCESS LIKE CONCAT('%', #{afi.success},
+				'%')
+				)
+			</if>
+			<if test="afi.formName!=null and afi.formName!=''">
+				AND (
+				FD.FORM_NAME LIKE CONCAT('%', #{afi.formName},
+				'%')
+				)
+			</if>
+			<if test="afi.applicantName!=null and afi.applicantName!=''">
+				AND (
+				FN.APPLICANT_NAME LIKE CONCAT('%',
+				#{afi.applicantName},
+				'%')
+				)
+			</if>
+			<if test="afi.ruleDescribe!=null and afi.ruleDescribe!=''">
+				AND (
+				AFI.RULEDESCRIBE LIKE CONCAT('%',
+				#{afi.ruleDescribe},
+				'%')
+				)
+			</if>
+		</where>
+	</sql>
+
+	<select id="querybyRuleNameAndInsid" resultMap="BaseResultMap">
+		select * from
+		ew_wf_alerting_form_inst AFI WHERE AFI.RULENAME=#{0} AND
+		AFI.FORM_INST_ID=#{1} limit 1
+	</select>
+	<insert id="saveRuleName"
+		parameterType="com.xzj.domain.FwAlertingFormInst"
+		useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO
+		ew_wf_alerting_form_inst(RULENAME,FORM_INST_ID,ALERTING_ID,CREATION_DATE,UPDATION_DATE)
+		VALUES(#{ruleName,jdbcType=VARCHAR},#{formInstID,jdbcType=BIGINT},#{alertingID},#{creationDate},#{updationDate})
+	</insert>
+
+
+	<select id="queryAlertingFormInst" resultMap="BaseResultMap"
+		parameterType="map">
+		SELECT
+		AFI.*,A.ALERTING_NAME,FD.FORM_NAME,FN.APPLICANT_NAME,DEPT.DEPARTMENT_NAME
+		from
+		ew_wf_alerting_form_inst AFI LEFT join
+		ew_wf_alerting A ON
+		AFI.ALERTING_ID=A.ID LEFT join ew_wf_form_definition FD ON
+		A.FORM_ID =
+		FD.ID
+		LEFT join ew_wf_form_inst FN on
+		FN.ID =AFI.FORM_INST_ID left join
+		ew_fw_userinfo UI on
+		UI.USER_ID=FN.APPLICANT_ID left join
+		ew_fw_department dept
+		on dept.id=UI.DEPT_ID
+		<include refid="findCondition"></include>
+		limit #{startPageRowCount}, #{maxPageRowCount}
+	</select>
+
+	<select id="countAlertingFormInst" resultType="int"
+		parameterType="map">
+		SELECT count(*) from
+		ew_wf_alerting_form_inst AFI LEFT join
+		ew_wf_alerting A
+		ON
+		AFI.ALERTING_ID=A.ID LEFT join ew_wf_form_definition
+		FD ON
+		A.FORM_ID =
+		FD.ID
+		LEFT join ew_wf_form_inst FN on
+		FN.ID
+		=AFI.FORM_INST_ID
+		<include refid="findCondition"></include>
+	</select>
+</mapper>
