@@ -12,7 +12,7 @@ import com.rabbitmq.client.DefaultConsumer;
 import com.rabbitmq.client.Envelope;
 
 public class Worker {
-	private final static String TASK_QUEUE_NAME = "hello"; 
+	private final static String TASK_QUEUE_NAME = "hello";
 
 	public static void main(String[] args) throws IOException, TimeoutException {
 		ConnectionFactory factory = new ConnectionFactory();
@@ -40,7 +40,7 @@ public class Worker {
 				}
 			}
 		};
-		boolean autoAck = false; // 锟街讹拷确锟斤拷锟斤拷息锟截憋拷
+		boolean autoAck = false; // 手动确认信息关闭
 		channel.basicConsume(TASK_QUEUE_NAME, autoAck, consumer);
 	}
 
